@@ -1,0 +1,433 @@
+{% extends 'base.html' %}
+{% block content %}
+
+    <style>
+    	/* 캔버스 테두리 설정 */
+        #myCanvas{
+            border: 1px solid black;
+        }
+
+        .controls
+        {
+            margin-top:30px;
+            display:flex;
+            flex-direction:column; /* 수직 정렬*/
+            align-items:center;  /*가운데 정렬*/
+        }
+
+        .controls .controls_colors
+        {
+            display:flex;
+        }
+
+        .controls_colors .controls_color
+        {
+            width:50px;
+            height: 50px;
+            box-shadow: 0 4px 7px rgba (50, 50, 93,  0.11), 0 1px 3px rgba(0, 0, 0, 0.068);
+            cursor:Pointer;
+        }
+
+        .controls .controls_btns
+        {
+            margin-bottom:30px;
+            border-raius: 8px;
+
+        }
+
+         .controls .controls_btns .btn
+         {
+            border-color: #2E4374;
+            background-color: #FACBEA;
+         }
+
+        .controls_btns button:active //클릭하면 반응하는 버튼
+        {
+            transform:scale(0.98);
+        }
+
+        .controls_color_btn
+        {
+            margin-bottom:30px;
+            border-raius: 5px;
+        }
+
+        .controls_color_btn button:active
+        {
+            transform:scale(0.98);
+        }
+
+        .controls_color_btn
+        {
+            border-color: #2E4374;
+            background-color: #D0BFFF;
+        }
+        .select_btn
+        {
+            border-color: #2E4374;
+            background-color: #DFCCFB;
+            border-raius: 2px;
+        }
+    </style>
+
+
+<div class="container-fluid">
+  <div class="row">
+                  <!--사이드바 -->
+    <div class="col-2 m-2">
+    {% include "./category.html" %}
+    </div>
+
+    <div class="col-6">
+        <div class="container my-3">
+            <h3>캔버스</h3>
+            <canvas id="myCanvas" width="800" height="1000">
+            </canvas>
+
+
+         </div>
+    </div>
+    <!--캔버스 도구들 -->
+    <div class="col m-2 mt-5">
+        <div class ="controls">
+
+            <div class="controls_btns ">
+                <button class = "btn" id="jsPaint" onclick="clickPaint()">그리기</button>
+                <button class = "btn" id="jsBack" onclick="undo_last()">이전상태</button>
+                <button class = "btn" id="jsRemove" onclick= "clickRemove()">지우기</button>
+                <button class = "btn" id="jsSave" onclick="clickSave()">저장하기</button>
+            </div>
+            <div class="controls_range mb-4">
+                 <label class="text-secondary" style="text-color:#141E46;">선,지우개 굵기 조절</label>
+               <input type="range" id="jsRange" min="0.1"
+                       max="10.0" value="2.5" step="0.1" />
+            </div>
+
+            <div>
+            <input type="text" id="colorInput" data-coloris>
+            <button class="controls_color_btn " id="jsColorpick" onclick= "clickColorpick()">선의색 선택</button>
+            </div>
+
+            <div class = "selects ">
+                <button class="btn select_btn btn-sm" id = "brushSelectBtn" onclick = "clickBrush()" >브러시 선택</button>
+
+                <select id = "brushSelect" >
+                    <option value="frill">프릴1</option>
+                    <option value="frill2">프릴2</option>
+                    <option value="pearl">진주</option>
+                    <option value="lace">레이스</option>
+                </select>
+
+                <button class="btn select_btn btn-sm" id = "backSelectBtn" onclick = "clickBackSelect()" >기본 이미지 선택</button>
+                <select id = "backSelect" >
+                    <option value="womanBody">성인 여자 전신</option>
+                    <option value="womanBodyBust">성인 여자 상의</option>
+                    <option value="Doll20">20cm 인형</option>
+                </select>
+            </div>
+            <div class = "mt-3">
+            <input type="text" id="sizeInput" value = 30>
+            <label class="text-secondary" id="sizeLabel">브러시 사이즈 입력(10~100)</label>
+            </div>
+
+            <div>
+                <details>
+                    <summary class="mt-3">캔버스 이용방법
+                    </summary>
+                    <label>그리기: 클릭하면 선을 그릴 수 있습니다. 색과 굵기를 조절할 수 있습니다.</label>
+                    <label>이전상태: 클릭하면 이전상태로 돌아갑니다.</label>
+                    <label>지우개:그림을 지웁니다. 굵기를 조절할 수 있습니다.</label>
+                    <label>선색 선택: 선의 색을 선택하고 선택하기를 클릭하면 색이 선택됩니다.</label>
+                    <label>브러시:선 대신 브러시의 모양이 나옵니다. 밑에 크기를 입력하여 크기 조절이 가능합니다.</label>
+                    <label>기본 이미지 선택: 배경이미지를 선택할 수 있습니다.</label>
+                </details>
+            </div>
+        </div>
+            <!--컨트롤 끝-->
+    </div>
+   </div>
+
+</div>
+
+
+            <script>
+
+            const canvas = document.getElementById("myCanvas");
+            const ctx = canvas.getContext("2d");
+            const colors = document.getElementsByClassName("jsColor");
+            const range = document.getElementById("jsRange");
+            const brush = document.getElementById("jsPaint");
+            const erase = document.getElementById("jsRemove");
+            const filling = document.getElementById("jsFill");
+            const brushTest = document.getElementById("BrushTest");
+            const brushSelect = document.getElementById("brushSelect");
+            const backSelect = document.getElementById("backSelect");
+            const sizeLabel =  document.getElementById("sizeLabel");
+
+            var img = new Image(); //브러시이미지 객체 생성
+            var backImg = new Image(); //배경 이미지 객체 생성
+
+            ctx.fillStyle = 'rgb(255, 255, 255)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // 이전으로 돌리기 // 빈배열을 만든다.
+            let restore_array =[];
+            let index = -1;
+
+            const INITIAL_COLOR = "#000000";
+            ctx.fillStyle = "white";
+
+            ctx.strokeStyle = "#2c2c2c";
+
+            ctx.strokeStyle = INITIAL_COLOR;
+            ctx.fillStyle = INITIAL_COLOR;
+            ctx.lineWidth = 2.5;
+
+            var firstX = -1;
+            var firstY = -1;
+
+            let firstClick = 1;
+
+            let painting = false;
+            const selection = false;
+
+            const MODE_BUTTON = [brush, erase, filling, brushTest]; // 지금 캔버스의 모드
+            let mode = brush;
+
+            function onMouseUp() // 그림 그리기 멈추기
+            {
+                painting = false;
+
+                if(event.type != 'mouseout')
+                {
+                    restore_array.push(ctx.getImageData(0,0,canvas.width, canvas.height));
+                    index += 1;
+                }
+                console.log(restore_array);
+            }
+
+            function onMouseLeave() // 그림 그리기 멈추기
+            {
+                painting = false;
+            }
+
+            function onMouseDown() // 그림 그리기 시작
+            {
+                firstX = event.offsetX;
+                firstY = event.offsetY;
+
+                painting = true;
+                firstClick = 1;
+
+            }
+
+            function onMouseMove(event) // 그림 그리기가 true면 그리기
+            {
+                const x = event.offsetX;
+                const y = event.offsetY;
+
+
+                if(!painting)
+                {
+                    ctx.beginPath();
+                    ctx.moveTo(x,y);
+                }
+                else if(mode == brush) // 선 그리는 모드
+                {
+                    ctx.lineTo(x,y);
+                    ctx.stroke();
+                }
+                else if(mode == erase) //지우개 모드
+                {
+                    ctx.fillStyle = "white";
+                    ctx.fillRect(x-ctx.lineWidth/2, y-ctx.lineWidth/2, ctx.lineWidth, ctx.lineWidth);
+                }
+                else if(mode == brushTest)
+                {
+                    img.src = '/media/lace.png';
+                    const distance = Math.sqrt((x - firstX)*(x - firstX) + (y - firstY)*(y - firstY));
+                    var size = document.getElementById('sizeInput').value;
+                    let angle = 0;
+                    let selectedBrush = brushSelect.options[brushSelect.selectedIndex].value;
+
+                    if(selectedBrush == "frill")
+                    {
+                        img.src = '/media/frill5.png';
+                    }
+                    else if(selectedBrush == "frill2")
+                    {
+                        img.src = '/media/frill6.png';
+                    }
+                    else if(selectedBrush == "pearl")
+                    {
+                        img.src = '/media/pearl.png';
+                    }
+                    else if(selectedBrush == "lace")
+                    {
+                        img.src = '/media/lace.png';
+                    }
+
+                    if(distance >= size-7 || firstClick == 1)
+                    {
+                        firstClick = 0;
+                        angle = getAngle(firstX ,firstY, x,y);
+                        img.onload = function()
+                        {
+                            ctx.save(); //저장
+                            ctx.translate(x,y); //중심점 변경
+                            //angle = getAngle(firstX,firstY, x,y);
+                            ctx.rotate(angle); // 회전시키기
+                            ctx.drawImage(img,0,0,size,size);
+                            ctx.restore(); //축 되돌리기
+                        }
+
+                        firstX = x;
+                        firstY = y;
+                    }
+
+                }
+
+                else
+                {
+                }
+            }
+
+            function getAngle(x1, y1, x2, y2)
+            {
+                var rad = Math.atan2(y2 - y1, x2 - x1);
+                return rad ;
+            }
+
+            function handleColorClick(event)
+            {
+                const color = event.target.style.backgroundColor;
+                ctx.strokeStyle = color;
+                ctx.fillStyle = color;
+            }
+
+            function handleRangeChange(event)
+            {
+                const size = event.target.value;
+                ctx.lineWidth = size;
+            }
+
+            function clickRemove()
+            {
+                mode = erase
+            }
+
+
+            function clickFill()
+            {
+                mode = filling;
+            }
+
+            function clickPaint()
+            {
+                mode = brush;
+            }
+
+            function handleCanvasClick()
+            {
+                if(mode === filling)
+                {
+                    ctx.fillRect(0,0, CANVAS_SIZE, CANVAS_SIZE);
+                }
+            }
+
+            function clickSave() // 저장이 된다.
+            {
+                const image = canvas.toDataURL("image/png");
+                const link = document.createElement("a");
+                link.href = image;
+                link.download = "PaintJS[EXPORT]";
+                link.click();
+            }
+
+            function clickColorpick()
+            {
+                var InputColor = document.getElementById('colorInput').value;
+                ctx.strokeStyle = InputColor;
+                ctx.fillStyle = InputColor;
+            }
+
+            function undo_last()
+            {
+                if(index <=0)
+                {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                }
+                else
+                {
+                    index -= 1;
+                    restore_array.pop();
+                    ctx.putImageData(restore_array[index],0,0);
+                }
+            }
+
+
+
+            function clickBack()
+            {
+                ctx.restore();
+                alert("djdl");
+            }
+
+            function clickBackSelect()
+            {
+                let backSelected = backSelect.options[backSelect.selectedIndex].value;
+                var size = document.getElementById('sizeInput').value;
+
+                if(backSelected == "womanBody")
+                {
+                    backImg.src = '/media/test2.png';
+                    backImg.onload = function()
+                    {
+                        ctx.drawImage(backImg,0,0,size,size);
+                    }
+                }
+                else if(backSelected == "Doll20")
+                {
+                    backImg.src = '/media/doll_20_1.png';
+                    backImg.onload = function()
+                    {
+                        ctx.drawImage(backImg,0,0,800,950);
+                    }
+                }
+
+            }
+
+            function clickBrush()
+            {
+                mode = brushTest;
+            }
+
+            if (canvas)
+            {
+                canvas.addEventListener("mousedown", onMouseDown); //마우스 누를때
+                canvas.addEventListener("mousemove", onMouseMove); //마우스 움직일때
+                canvas.addEventListener("mouseup", onMouseUp);
+                canvas.addEventListener("mouseleave", onMouseLeave);
+                canvas.addEventListener("click", handleCanvasClick);
+
+            }
+
+            Array.from(colors).forEach(color =>
+                color.addEventListener("click", handleColorClick));
+
+            if(range)
+            {
+                range.addEventListener("input", handleRangeChange);
+            }
+
+
+
+
+             </script>
+        <!--컬러파레트-->
+        <script src="https://cdn.jsdelivr.net/npm/spectrum-colorpicker2/dist/spectrum.min.js">
+        </script>
+        <script src="https://cdn.jsdelivr.net/gh/mdbassit/Coloris@latest/dist/coloris.min.js">
+        </script>
+
+{% endblock %}

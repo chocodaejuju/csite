@@ -1,0 +1,199 @@
+<style>
+.panel-default .panel-body{
+    text-align: center;
+    }
+
+.panel-default .panel-body .panel-down{
+    text-align: center;
+    }
+
+.list-group .list-group-item{
+    text-align: center;
+    background-color: #FBEFF5;
+    border-color: #293462;
+    }
+
+.table .table-up{
+    background-color: #DFCCFB;
+}
+
+.table{
+    text-color: #293462
+}
+
+</style>
+{% extends 'base.html' %}
+{% load community_filter %}
+{% block content %}
+
+<div class="container-3">
+  <div class="row">
+      <div class="col-2">
+          <div class="panel panel-info">
+                <div class="panel-heading m-3">
+                <h3 class="panel-title text-center">게시판</h3>
+                </div>
+            <!-- 사이드바 메뉴목록1 -->
+                <ul class="red list-group m-1">
+                <li class="red list-group-item list-group-item-action ">
+                    <a href="{% url 'community:index' %}" style="color: #293462">질문과 답변</a></li>
+                <li class="list-group-item list-group-item-action">
+                    <a href="{% url 'community:free' %}" style="color: #293462">자유게시판</a></li>
+                <li class="list-group-item list-group-item-action">
+                    <a href="{% url 'community:tip' %}" style="color: #293462">팁 공유</a></li>
+                <li class="list-group-item list-group-item-action">
+                    <a href="{% url 'community:shop' %}" style="color: #293462">쇼핑몰</a></li>
+                </ul>
+          </div>
+      </div>
+
+     <div class="col-9">
+     <div class="row my-3">
+        <div class="panel panel-default m-4">
+            <div class="panel-body fw-bold"> <h3>질문과 답변 게시판</h3></div>
+            <div class="panel-body text-muted">질문을 올리고 답변을 달 수 있습니다.</div>
+        </div>
+        <div class="col-6">
+            <a href="{% url 'community:question_create' %}" class="btn"  style="background-color: #BA94D1;">질문 등록하기</a>
+        </div>
+        <div class="col-6">
+            <div class="input-group">
+                <input type="text" id="search_kw" class="form-control" value="{{ kw|default_if_none:'' }}">
+                <div class="input-group-append">
+                    <button class="btn btn-outline-secondary" type="button" id="btn_search">검색하기</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <table class="table " style = "border-color: #FFC7EA">
+        <thead>
+        <tr class="text-center table-up ">
+            <th>번호</th>
+            <th style="width:50%">제목(답변개수)</th>
+            <th>작성자</th>
+            <th>작성일시</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% if question_list %}
+        {% for question in question_list %}
+        <tr class = "text-center text-table" >
+            <td>
+                <!-- 번호 = 전체건수 - 시작인덱스 - 현재인덱스 + 1 -->
+                {{ question_list.start_index|add:forloop.counter0}}
+            </td>
+            <td class="text-start">
+                <a href="{% url 'community:detail' question.id %}" style="color: #293462">{{ question.subject }}</a>
+                <!-- 답변 개수 표시 -->
+                {% if question.answer_set.count >= 0 %}
+                <span style="color: #3104B4" class=" small mx-2" >{{ question.answer_set.count }}</span>
+                {% endif %}
+            </td>
+            {% if question.hide_author == False %}
+            <td>{{question.author.username}}</td> <!-- 작성자표시 -->
+            {% else %}
+            <td>익명</td> <!--익명표시 -->
+            {% endif %}
+            <td>{{ question.create_date }}</td>
+        </tr>
+        {% endfor %}
+        {% else %}
+        <tr>
+            <td colspan="4">질문이 없습니다.</td>
+        </tr>
+        {% endif %}
+        </tbody>
+    </table>
+
+        <!-- 페이징처리 시작 -->
+
+    <ul class="pagination justify-content-center">
+        <!-- 처음 페이지-->
+        {% if question_list.has_previous %}
+        <li class="page-item">
+            <a class="page-link" data-page="{{ first_page }}"
+            href="javascript:void(0)" style="color: #6A0888">처음</a>
+        </li>
+        {% else %}
+        <li class="page-item disabled">
+            <a class="page-link" tabindex="-1" aria-disabled="true" href="#">처음</a>
+        </li>
+        {% endif %}
+        <!-- 이전페이지 -->
+        {% if question_list.has_previous %}
+        <li class="page-item">
+            <a class="page-link" data-page="{{ question_list.previous_page_number }}"
+                href="javascript:void(0)" style="color: #6A0888">이전페이지</a>
+        </li>
+        {% else %}
+        <li class="page-item disabled">
+            <a class="page-link" tabindex="-1" aria-disabled="true" href="#">이전페이지</a>
+        </li>
+        {% endif %}
+        <!-- 페이지리스트 -->
+        {% for page_number in question_list.paginator.page_range %}
+        {% if page_number >= question_list.number|add:-4 and page_number <= question_list.number|add:4 %}
+        {% if page_number == question_list.number %}
+        <li class="page-item active" aria-current="page">
+            <a class="page-link" data-page="{{ page_number }}"
+                href="javascript:void(0)" style="color: #293462; background-color: #F6CEE3">{{ page_number }}</a>
+        </li>
+        {% else %}
+        <li class="page-item">
+            <a class="page-link" data-page="{{ page_number }}"
+                href="javascript:void(0)" style="color: #293462">{{ page_number }}</a>
+        </li>
+        {% endif %}
+        {% endif %}
+        {% endfor %}
+        <!-- 다음페이지 -->
+        {% if question_list.has_next %}
+        <li class="page-item">
+            <a class="page-link" data-page="{{ question_list.next_page_number }}"
+                href="javascript:void(0)" style="color: #6A0888">다음페이지</a>
+        </li>
+        {% else %}
+        <li class="page-item disabled">
+            <a class="page-link" tabindex="-1" aria-disabled="true" href="#">다음페이지</a>
+        </li>
+        {% endif %}
+        <!-- 마지막 페이지-->
+        {% if question_list.has_next %}
+        <li class="page-item">
+            <a class="page-link" data-page="{{ last_page }}"
+                href="javascript:void(0)" style="color: #6A0888">마지막</a>
+        </li>
+        {% else %}
+        <li class="page-item disabled">
+            <a class="page-link" tabindex="-1" aria-disabled="true" href="#">마지막</a>
+        </li>
+        {% endif %}
+    </ul>
+    <!-- 페이징처리 끝 -->
+     </div>
+  </div>
+</div>
+<form id="searchForm" method="get" action="{% url 'community:index' %}">
+    <input type="hidden" id="kw" name="kw" value="{{ kw|default_if_none:'' }}">
+    <input type="hidden" id="page" name="page" value="{{ page }}">
+</form>
+{% endblock %}
+{% block script %}
+<script type='text/javascript'>
+const page_elements = document.getElementsByClassName("page-link");
+Array.from(page_elements).forEach(function(element) {
+    element.addEventListener('click', function() {
+        document.getElementById('page').value = this.dataset.page;
+        document.getElementById('searchForm').submit();
+    });
+});
+const btn_search = document.getElementById("btn_search");
+btn_search.addEventListener('click', function() {
+    document.getElementById('kw').value = document.getElementById('search_kw').value;
+    document.getElementById('page').value = 1;  // 검색버튼을 클릭할 경우 1페이지부터 조회한다.
+    document.getElementById('searchForm').submit();
+});
+</script>
+{% endblock %}

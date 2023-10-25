@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block content %}
+<!-- 답변 수정-->
+
+<div class="container my-3">
+    <h5 class="my-3 border-bottom pb-2">댓글 작성하기</h5>
+    <form method="post">
+    <div class="form-check">
+    <input class="form-check-input" type="checkbox" value="1" name = "Check", id="Check">
+    <label class="form-check-label" for="flexCheckDefault">
+        익명표시
+    </label>
+    </div>
+        {% csrf_token %}
+        {% include "form_errors.html" %}
+        <div class="mb-3">
+            <label for="content" class="form-label">답변내용</label>
+            <textarea class="form-control" name="content" id="content"
+                      rows="10">{{ form.content.value|default_if_none:'' }}</textarea>
+        </div>
+        <button type="submit" class="btn " style="background-color: #FFB7B7;">저장하기</button>
+    </form>
+</div>
+{% endblock %}

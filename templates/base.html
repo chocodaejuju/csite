@@ -1,0 +1,33 @@
+{% load static %}
+<!doctype html>
+<html lang="ko">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!--컬러 팔레트 -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/spectrum-colorpicker2/dist/spectrum.min.css">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" type="text/css" href="{% static 'bootstrap.min.css' %}?after">
+    <!-- community CSS -->
+    <link rel="stylesheet" type="text/css" href="{% static 'style.css' %}">
+    <!--컬러 팔레트 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/mdbassit/Coloris@latest/dist/coloris.min.css"/>
+    <title>옷만들기 공유 웹사이트</title>
+</head>
+<body>
+<!-- 네비게이션바 html include -->
+{%include "navbar.html" %}
+<!-- 기본 템플릿 안에 추가될 내용 시작 -->
+{% block content %}
+{% endblock %}
+<!-- 기본 템플릿 안에 추가될 내용 끝 -->
+<!-- 부트스트랩 js -->
+<script src="{% static 'bootstrap.min.js' %}" ></script>
+
+<!-- 자바스크립트 시작 -->
+{% block script %}
+{% endblock %}
+<!-- 자바스크립트 끝 -->
+</body>
+</html>

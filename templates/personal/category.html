@@ -1,0 +1,24 @@
+<style>
+.list-group-item{
+    background-color: #FBEFF5;
+    border-color: #293462;
+}
+
+</style>
+
+                  <!--사이드바 -->
+
+<!-- 사이드 바 메뉴-->
+  <!-- 패널 타이틀1 -->
+    <div class="panel panel-info">
+        <div class="panel-heading">
+        <h3 class="panel-title text-center" >카테고리</h3>
+        </div>
+    <!-- 사이드바 메뉴목록1 -->
+        <ul class="list-group text-center">
+        <li class="list-group-item"><a href="{% url 'personal:info' %}" style="color: #293462" >내정보</a></li>
+        <li class="list-group-item"><a href="{% url 'personal:design' %}" style="color: #293462">디자인</a></li>
+        <li class="list-group-item"><a href="{% url 'personal:note' %}" style="color: #293462">기록공간</a></li>
+        <li class="list-group-item"><a href="{% url 'personal:material' %}" style="color: #293462">재료관리</a></li>
+        </ul>
+    </div>

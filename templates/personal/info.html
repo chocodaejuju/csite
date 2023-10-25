@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container">
+  <div class="row">
+      <div class="col-2 m-2">
+      {% include "./category.html" %}
+      </div>
+    <div class="col-6">
+        <div class="container my-3">
+            <h3>계정 정보</h3>
+            <div class="row">
+                <h4 class="border-bottom py-2" style="color:#132043">아이디 : {{ user.username }}</h4>
+            </div>
+
+            <div class="row">
+                <h4 class="border-bottom py-2">
+                    <!-- a href="{% url 'common:change_password' %}" class="stretched-link">비밀번호 바꾸기</a -->
+                    <a href="{% url 'common:change_password' %}" style="color:#132043">비밀번호 바꾸기</a>
+                </h4>
+
+            </div >
+
+            <div class="row">
+                <h4 class="border-bottom py-2">
+                    <a href="{% url 'personal:activity' %}" style="color:#132043">스크랩한 글</a> </h4>
+
+            </div>
+
+         </div>
+
+
+     </div>
+
+  </div>
+</div>
+
+
+{% endblock %}

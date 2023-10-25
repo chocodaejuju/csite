@@ -1,0 +1,163 @@
+<style>
+.text-start{
+    background-color: #FBEFF8;
+}
+.text-start .text{
+    color: #293462;
+}
+</style>
+{% extends 'base.html' %}
+{% load community_filter %}
+{%block content %}
+<div class="container my-3">
+        <!-- 메세지 표시  -->
+    {% if messages %}
+    <div class="alert alert-danger my-3" role="alert">
+    {% for message in messages %}
+        <strong>{{ message.tags }}</strong>
+        <ul><li>{{ message.message }}</li></ul>
+    {% endfor %}
+    </div>
+    {% endif %}
+    <!-- 질문 -->
+    <h2 class="border-bottom py-2">{{ shopping.name }}</h2>
+     <a href="{% url 'community:shop' %}"
+       class="small b-3" style = "color: #D67BFF;">쇼핑몰 게시판으로</a>
+    <div class=" text-dark p-2 text-start">
+        <div class = "mb-3">  작성자:{{ shopping.author.username }}  </div>
+        <div  class="mb-2">  작성일자: {{ shopping.create_date }}</div>
+    {% if shopping.change_date %} <!--수정 날짜가 있다면-->
+        <div class="mb-2">  수정일자:{{ shopping.change_date }}</div>
+    {% endif %}
+    </div>
+    <div class="card my-3">
+        <div class="card-body">
+            <div class="card-text" >{{ shopping.content|mark }}</div>
+            {% for images in shopping.shopimage_set.all %}
+                <div style="img-fluid">
+                <img src="{{ images.image.url }}" width="700">
+                </div>
+                {% if images.text %}
+                    {{ images.text }}
+                {% endif %}
+            {% endfor %}
+            <div class="d-flex justify-content-end">
+
+        </div>
+            <div class="my-3">
+                {% if user.is_authenticated %} <!-- 로그인했을때만 보이게-->
+                <a href="javascript:void(0)" data-uri="{% url 'community:shop_vote' shopping.id  %}"
+               class="recommend btn btn-sm btn-outline-secondary "> 추천
+                <span class="badge rounded-pill bg-success">{{shopping.voter.count}}</span>
+                </a>
+                <a href="javascript:void(0)" data-uri="{% url 'community:shop_save' shopping.id  %}"
+               class="save btn btn-sm btn-outline-secondary "> 스크랩
+                </a>
+                {% endif %}
+                {%if request.user == shopping.author %} <!-- 글 작성자에게만 보이게한다.-->
+                <a href="{% url 'community:shop_modify' shopping.id %}"
+                   class="btn btn-sm btn-outline-info">수정하기</a>
+                <a href="javascript:void(0)" class="delete btn btn-sm btn-outline-danger"
+                    data-uri="{% url 'community:shop_delete' shopping.id  %}">삭제하기</a>
+                {%endif%}
+            </div>
+        </div>
+    </div>
+    <!-- 답변 -->
+    <h5 class="border-bottom my-3 py-2">{{shopping.shoppingcomment_set.count}}개의 댓글이 있습니다.</h5>
+    {% for shoppingcomment in shopping.shoppingcomment_set.all %}
+    <a id="shoppingcomment_{{ shoppingcomment.id }}"></a> <!-- 앵커태그 -->
+    <div class="card my-3">
+        <div class="card-body">
+            <div class="card-text" >{{ shoppingcomment.content|mark }}</div>
+            <div class="d-flex justify-content-end">
+                {% if shoppingcomment.change_date %} <!--수정 날짜가 있다면-->
+            <div class="badge bg-light text-dark p-2 text-start mx-3">
+                <div class="mb-2">수정일시</div>
+                <div>{{ shoppingcomment.change_date}}</div>
+            </div>
+            {% endif %}
+                <div class="badge text-dark p-2 text-start" style="background-color: #FBEFF8;">
+                    {% if shoppingcomment.hide_author == False %} <!-- 작성자 표시 -->
+                    <div class = "mb-2">  작성자:{{ shoppingcomment.author.username }} </div>
+                    {% else %}
+                    <div class = "mb-2">  작성자:익명 </div> <!-- 익명 표시-->
+                    {% endif %}
+                    <div  class="mb-2">  작성일자: {{ shoppingcomment.create_date }}</div>
+                </div>
+            </div>
+            <div class="my-3">
+                <a href="javascript:void(0)" data-uri="{% url 'community:shopcomment_vote' shoppingcomment.id  %}"
+               class="recommend btn btn-sm btn-outline-secondary"> 추천
+                <span class="badge rounded-pill bg-success">{{shoppingcomment.voter.count}}</span>
+                </a>
+            {% if request.user == shoppingcomment.author %}
+            <a href="{% url 'community:shopcomment_modify' shoppingcomment.id  %}"
+               class="btn btn-sm btn-outline-info">수정하기</a>
+            <a href="#" class="delete btn btn-sm btn-outline-danger "
+               data-uri="{% url 'community:shopcomment_delete' shoppingcomment.id  %}">삭제하기</a>
+            {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+    <!-- 답변 등록 -->
+    <form action="{% url 'community:shopcomment_create' shopping.id %}" method="post" class="my-3">
+        {% csrf_token %}
+         <!-- 오류표시 Start -->
+        {% if form.errors %}
+        <div class="alert alert-danger" role="alert">
+            {% for field in form %}
+            {% if field.errors %}
+            <div>
+                <strong>{{ field.label }}</strong>
+                {{ field.errors }}
+            </div>
+            {% endif %}
+            {% endfor %}
+        </div>
+        {% endif %}
+        <!-- 오류표시 End -->
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="1" name = "Check", id="Check">
+            <label class="form-check-label" for="flexCheckDefault">
+                익명표시
+            </label>
+        </div>
+        <div class="form-group">
+               <textarea {% if not user.is_authenticated %}disabled{% endif %}
+              name="content" id="content" class="form-control" rows="10"></textarea>
+        </div>
+        <input type="submit" value="답변등록" class="btn mt-2" style="background-color: #FFB7B7;">
+    </form>
+</div>
+{% endblock %}
+{% block script %}
+
+<script type='text/javascript'>
+const delete_elements = document.getElementsByClassName("delete");
+Array.from(delete_elements).forEach(function(element) {
+    element.addEventListener('click', function() {
+        if(confirm("삭제하시겠습니까?")) {
+            location.href = this.dataset.uri;
+        };
+    });
+});
+const recommend_elements = document.getElementsByClassName("recommend");
+Array.from(recommend_elements).forEach(function(element) {
+    element.addEventListener('click', function() {
+        if(confirm("추천하시겠습니까?")) {
+            location.href = this.dataset.uri;
+        };
+    });
+});
+const save_elements = document.getElementsByClassName("save");
+Array.from(save_elements).forEach(function(element) {
+    element.addEventListener('click', function() {
+        if(confirm("스크랩하시겠습니까?")) {
+            location.href = this.dataset.uri;
+        };
+    });
+});
+</script>
+{% endblock %}

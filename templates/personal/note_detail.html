@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% load community_filter %}
+{%block content %}
+<div class="container my-3">
+        <!-- 메세지 표시  -->
+    {% if messages %}
+    <div class="alert alert-danger my-3" role="alert">
+    {% for message in messages %}
+        <strong>{{ message.tags }}</strong>
+        <ul><li>{{ message.message }}</li></ul>
+    {% endfor %}
+    </div>
+    {% endif %}
+    <!-- 질문 -->
+    <h2 class="border-bottom py-2">{{ note.subject }}</h2>
+    {% if note.deadline %}
+    <div class="mb-2 " style="color: #B931FC">  {{d_day }}일 남았습니다. </div>
+    {% endif %}
+    <div class="text-dark p-2 text-start"style="background-color: #FBEFF8;">
+        <div class = "mb-3">  작성자:{{ note.author.username }} </div>
+        {% if note.finish == True %}
+        <div class = "mb-3"> 완성 </div>
+        {% else %}
+        <div class = "mb-3"> 미완성 </div> <!-- 익명 표시-->
+        {% endif %}
+        <div  class="mb-2">  작성일자: {{ note.create_date }}</div>
+        {% if note.change_date %} <!--수정 날짜가 있다면-->
+        <div class="mb-2">  수정일자:{{ note.change_date }}</div>
+        {% endif %}
+        {% if note.deadline %} <!--목표 날짜가 있다면-->
+        <div class="mb-2">  목표 날짜:{{ note.deadline }} </div>
+        {% endif %}
+    </div>
+    <div class="card my-3">
+        <div class="card-body">
+            <div class="card-text" >{{ note.content|mark }}</div>
+            {% for images in note.noteimage_set.all %}
+            <div style="img-fluid">
+            <img src="{{ images.image.url }}" width="700">
+            </div>
+            {% if images.text %}
+                {{ images.text }}
+                {% endif %}
+            {% endfor %}
+
+            <div class="d-flex justify-content-end">
+
+        </div>
+            <div class="my-3">
+                {%if request.user == note.author %} <!-- 글 작성자에게만 보이게한다.-->
+                <a href="{% url 'personal:note_modify' note.id %}"
+                   class="btn btn-sm btn-outline-info">수정하기</a>
+                <a href="javascript:void(0)" class="delete btn btn-sm btn-outline-danger"
+                    data-uri="{% url 'personal:note_delete' note.id  %}">삭제하기</a>
+                {%endif%}
+            </div>
+        </div>
+    </div>
+    <div class="col-6">
+        <a href="{% url 'personal:note' %}" class="btn " style=" background-color: #BC7AF9;">목록으로</a>
+    </div>
+</div>
+{% endblock %}
+{% block script %}
+<script type='text/javascript'>
+const delete_elements = document.getElementsByClassName("delete");
+Array.from(delete_elements).forEach(function(element) {
+    element.addEventListener('click', function() {
+        if(confirm("삭제하시겠습니까?")) {
+            location.href = this.dataset.uri;
+        };
+    });
+});
+
+</script>
+{% endblock %}

@@ -1,0 +1,83 @@
+<!-- 네비게이션바 -->
+<style>
+/* navbar */
+.navbar-default {
+    background-color: #ECCEF5;
+    border-color: #ECCEF5;
+}
+/*글씨 색*/
+.navbar-default .navbar-brand {
+    color: #293462;
+}
+</style>
+<nav class="navbar navbar-default navbar-expand-lg navbar-light  border-bottom ">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="{% url 'cloth:index' %}">메인</a>
+        <button class="navbar-toggler" type="lable"
+                data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent"
+                aria-expanded="false"
+                aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <li class=" navbar-brand nav-item dropdown" style="list-style: none; text-decoration : none;">
+         <a class=" navbar-brand nav-link dropdown-toggle" href="{% url 'community:index' %}" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            커뮤니티
+         </a>
+          <button class="navbar-toggler" type="lable"
+                data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent"
+                aria-expanded="false"
+                aria-label="Toggle navigation">
+        </button>
+        <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="{% url 'community:index' %}">질문게시판</a></li>
+            <li><a class="dropdown-item" href="{% url 'community:free' %}">자유게시판</a></li>
+            <li><a class="dropdown-item" href="{% url 'community:tip' %}">팁 공유</a></li>
+            <li><a class="dropdown-item" href="{% url 'community:shop' %}">쇼핑몰 공유</a></li>
+          </ul>
+        </li>
+
+        <a class="navbar-brand" href="{% url 'map:index' %}">지도</a>
+        <button class="navbar-toggler" type="lable"
+                data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent"
+                aria-expanded="false"
+                aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        {% if user.is_authenticated %} <!--로그인 되어있을때-->
+        <a class="navbar-brand" href="{% url 'personal:index' %}">MY</a>
+        <button class="navbar-toggler" type="lable"
+                data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent"
+                aria-expanded="false"
+                aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        {%endif%}
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    {% if user.is_authenticated %} <!--로그인 되어있을때-->
+                    <a class="nav-link" href="{% url 'common:logout' %}"> ({{ user.username }}) 로그아웃</a>
+                    {% else %} <!-- 로그인 안되어있을때-->
+                    <a class="nav-link" href="{% url 'common:login' %}">로그인</a>
+                    {% endif %}
+                </li>
+                 <li>
+                    {% if not user.is_authenticated %} <!-- 로그인 안되어있을때-->
+                    <a class="nav-link" href="{% url 'common:signup' %}">회원가입</a>
+                    {% endif %}
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
