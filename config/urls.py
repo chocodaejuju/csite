@@ -18,6 +18,7 @@ from django.urls import path, include
 from cloth import views
 from . import settings
 from django.conf.urls.static import static
+from . settings import base
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -28,4 +29,4 @@ urlpatterns = [
     path('personal/',include('personal.urls')),
     path('', views.index, name = 'cloth'), # '/'에 맵핑
 
-]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+]+ static(base.MEDIA_URL, document_root=base.MEDIA_ROOT)
