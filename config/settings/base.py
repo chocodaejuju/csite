@@ -205,5 +205,9 @@ LOGGING = {
             'level': 'INFO',
             'propagate': False,
         },
+        'community': {
+            'handlers': ['console', 'file'],
+            'level': 'INFO',
+        },
     }
 }
