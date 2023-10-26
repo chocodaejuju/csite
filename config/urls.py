@@ -30,3 +30,6 @@ urlpatterns = [
     path('', views.index, name = 'cloth'), # '/'에 맵핑
 
 ]+ static(base.MEDIA_URL, document_root=base.MEDIA_ROOT)
+
+
+handler404 = 'common.views.page_not_found'
