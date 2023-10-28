@@ -250,7 +250,7 @@
                 }
                 else if(mode == brushTest)
                 {
-                    img.src = "{%static 'frill5.png' %}";
+                    img.src = "{%static '/image/frill5.png' %}";
                     const distance = Math.sqrt((x - firstX)*(x - firstX) + (y - firstY)*(y - firstY));
                     var size = document.getElementById('sizeInput').value;
                     let angle = 0;
@@ -258,19 +258,19 @@
 
                     if(selectedBrush == "frill")
                     {
-                        img.src = "{%static 'frill5.png' %}";
+                        img.src = "{%static '/image/frill5.png' %}";
                     }
                     else if(selectedBrush == "frill2")
                     {
-                        img.src = '/media/frill6.png';
+                        img.src = "{%static '/image/frill6.png' %}";
                     }
                     else if(selectedBrush == "pearl")
                     {
-                        img.src = '/media/pearl.png';
+                        img.src = "{%static '/image/pearl.png' %}";
                     }
                     else if(selectedBrush == "lace")
                     {
-                        img.src = '/media/lace.png';
+                        img.src =  "{%static '/image/lace.png' %}";
                     }
 
                     if(distance >= size-7 || firstClick == 1)
@@ -386,7 +386,7 @@
 
                 if(backSelected == "womanBody")
                 {
-                    backImg.src = '/media/test2.png';
+                    backImg.src =  "{%static '/image/test2.png' %}";
                     backImg.onload = function()
                     {
                         ctx.drawImage(backImg,0,0,size,size);
@@ -394,7 +394,7 @@
                 }
                 else if(backSelected == "Doll20")
                 {
-                    backImg.src = '/media/doll_20_1.png';
+                    backImg.src = "{%static '/image/doll_20_1.png' %}";
                     backImg.onload = function()
                     {
                         ctx.drawImage(backImg,0,0,800,950);
