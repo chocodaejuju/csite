@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% block content %}
-
+{% load static %}
     <style>
     	/* 캔버스 테두리 설정 */
         #myCanvas{
@@ -250,7 +250,7 @@
                 }
                 else if(mode == brushTest)
                 {
-                    img.src = '../media/lace.png';
+                    img.src = "{%static 'frill5.png' %}";
                     const distance = Math.sqrt((x - firstX)*(x - firstX) + (y - firstY)*(y - firstY));
                     var size = document.getElementById('sizeInput').value;
                     let angle = 0;
@@ -258,7 +258,7 @@
 
                     if(selectedBrush == "frill")
                     {
-                        img.src = '../media/frill5.png';
+                        img.src = "{%static 'frill5.png' %}";
                     }
                     else if(selectedBrush == "frill2")
                     {
