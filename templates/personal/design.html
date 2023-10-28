@@ -74,23 +74,13 @@
 <div class="container-fluid">
   <div class="row">
                   <!--사이드바 -->
-    <div class="col-2 m-2">
-    {% include "./category.html" %}
-    </div>
+    <div class="col-4 m-2">
+        <div class ="col-6 m-2 ">
+          {% include "./category.html" %}
+        </div>
 
-    <div class="col-6">
-        <div class="container my-3">
-            <h3>캔버스</h3>
-            <canvas id="myCanvas" width="770" height="1000">
-            </canvas>
-
-
-         </div>
-    </div>
-    <!--캔버스 도구들 -->
-    <div class="col-3 m-2 mt-5">
-        <div class ="controls">
-
+         <div class ="controls border">
+         <h4 class = "m-2">디자인 도구</h4>
             <div class="controls_btns ">
                 <button class = "btn" id="jsPaint" onclick="clickPaint()">그리기</button>
                 <button class = "btn" id="jsBack" onclick="undo_last()">이전상태</button>
@@ -146,6 +136,20 @@
             </div>
         </div>
             <!--컨트롤 끝-->
+    </div>
+
+    <div class="col-6">
+        <div class="container my-3">
+            <h3>캔버스</h3>
+            <canvas id="myCanvas" width="770" height="1000">
+            </canvas>
+
+
+         </div>
+    </div>
+    <!--캔버스 도구들 -->
+    <div class="col-3 m-2 mt-5">
+
     </div>
    </div>
 
