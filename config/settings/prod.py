@@ -3,7 +3,6 @@ import environ
 
 ALLOWED_HOSTS = ['15.165.151.200']
 STATIC_ROOT = BASE_DIR / 'static/'
-MEDIA_ROOT = BASE_DIR / 'media/'
 STATICFILES_DIRS = []
 DEBUG = False
 env = environ.Env()
