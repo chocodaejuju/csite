@@ -1,1 +1,42 @@
+<style>
+    .texts{
+        position: absolute;
+        top:40%;
+        left:50%;
+        transform: translate( -50%, -50% );
+    }
+    .images:hover{
+    border: solid 4px transparent;
+    background-color:#F875AA;
+    border-color:#F875AA;
+    }
+    .images:active{
+    border: solid 4px transparent;
+    background-color: F875AA;
+    border-color:#F875AA;
+    }
+</style>
 {% extends 'base.html' %}
+{% block content %}
+{% load static %}
+<div class="container-fluid" style =" height:600px;text-align:center;position: relative;">
+    <img src="{%static 'image/main2.jpg' %}" style="width:100%;height: 100%;">
+    <div class = "texts mt-5">
+    <h3>옷 제작 정보 공유&기록 사이트</h3>
+    <h4 style="color:#7D7C7C;">인형 옷, 사람 옷, 소품 등등 다양한 제작 정보를 공유하고 제작 과정을 기록할 수 있습니다. </h4>
+    </div>
+</div>
+
+<div class="container-fluid mt-5 " style="height:300px;text-align: center;">
+    <a class  href="{% url 'community:index' %}">
+    <img class = "images" src="{%static 'image/community2.png' %}" style="width:20%;height: 70%;">
+    </a>
+    <a href="{% url 'map:index' %}">
+    <img src="{%static 'image/map2.png' %}" class = "images" style="width:20%;height: 70%;">
+    </a>
+    <a href="{% url 'personal:index' %}">
+    <img src="{%static 'image/my.png' %}" class = "images" style="width:20%;height: 70%;">
+    </a>
+
+</div>
+{% endblock%}
