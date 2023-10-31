@@ -415,6 +415,7 @@ for (var i = 0; i < markerPositions.length; i++)
 			PosLabel.innerText = "(위도,경도) : " +  marker.getPosition();
 			rtitle.value = markerTitle[marker.getTitle()].trimStart();
 			rcontent.textContent = markerContent[marker.getTitle()].trimStart();
+			alert(markerContent[marker.getTitle()]);
 			infowindow.open(map, marker);
 		};
 
