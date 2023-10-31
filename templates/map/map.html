@@ -143,12 +143,12 @@
 		</div>
 		<div id="marker_title" style="display: none">
 				{% for marker in marker_list %}
-					{{ marker.title }},
+					{{ marker.title }} Null
 				{% endfor %}
 		</div>
-		<div id="marker_content" style="">
+		<div id="marker_content" style="display: none">
 				{% for marker in marker_list %}
-					{{ marker.content }},
+					{{ marker.content }} Null
 				{% endfor %}
 		</div>
 		<div id = "marker_id" style="display: none">
@@ -195,8 +195,8 @@
 <script >
 var list_lat = document.getElementById("marker_lat").innerText.split(',');
 var list_lng = document.getElementById("marker_lng").innerText.split(',');
-var list_title = document.getElementById("marker_title").innerText.split(',');
-var list_content = document.getElementById("marker_content").innerText.split(',');
+var list_title = document.getElementById("marker_title").innerText.split('Null');
+var list_content = document.getElementById("marker_content").innerText.split('Null');
 var list_id = document.getElementById("marker_id").innerText.split(',');
 var PosLabel = document.getElementById("posLabel");
 var markerIdL =  document.getElementById("markerIdL");
