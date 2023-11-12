@@ -174,8 +174,8 @@ def material_modify(request, material_id):
     return render(request, 'personal/material_form.html', {'form': form, 'formset': formset})
 
 @login_required(login_url = 'common:login')
-def material_delete(request, note_id):
-    materials = get_object_or_404(Material, pk=note_id)
+def material_delete(request, material_id):
+    materials = get_object_or_404(Material, pk=material_id)
     if request.user != materials.author:
         messages.error(request, '삭제권한이 없습니다')
         return redirect('personal:material_detail', material_id=materials.id)
