@@ -68,9 +68,6 @@
             </div>
         </div>
     </div>
-    <div class="col-6">
-        <a href="{% url 'community:tip' %}" class="btn btn-primary">목록으로</a>
-    </div>
     <!-- 답변 -->
     <h5 class="border-bottom my-3 py-2">{{tip.tipcomment_set.count}}개의 답변이 있습니다.</h5>
     {% for tipcomment in tip.tipcomment_set.all %}
